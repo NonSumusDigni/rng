@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>RNG</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon.svg">
+</head>
+<body>
+  <div id="app">
+    <!-- Roll View Header -->
+    <header id="header">
+      <button id="sets-btn" class="header-btn" title="Saved Sets">Sets</button>
+      <span id="set-title">Untitled</span>
+      <div id="header-right">
+        <button id="save-btn" class="header-btn" title="Save">Save</button>
+        <div class="dropdown">
+          <button id="more-btn" class="header-btn" title="More options">&middot;&middot;&middot;</button>
+          <div class="dropdown-menu" id="more-menu">
+            <button id="save-as-btn">Save As&hellip;</button>
+            <button id="new-set-btn">New Set</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Roll View -->
+    <main id="roll-view">
+      <div id="sections-container"></div>
+    </main>
+
+    <!-- Saved Sets View -->
+    <div id="sets-view" class="view hidden">
+      <header class="sets-header">
+        <button id="back-btn" class="header-btn">&larr; Back</button>
+        <span>Saved Sets</span>
+      </header>
+      <div id="sets-list"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+      <button id="add-btn" class="footer-btn" title="Add Generator">+</button>
+      <button id="roll-btn" class="footer-btn roll" title="Roll All">&#x1F3B2;</button>
+    </footer>
+  </div>
+
+  <!-- Edit Generator Modal -->
+  <div class="modal-overlay hidden" id="edit-gen-modal">
+    <div class="modal">
+      <h3>Edit Generator</h3>
+      <div class="form-group">
+        <label for="gen-icon">Icon (emoji)</label>
+        <input type="text" id="gen-icon" class="icon-input" placeholder="&#x1F3AF;">
+      </div>
+      <div class="form-group">
+        <label for="gen-name">Name</label>
+        <input type="text" id="gen-name" placeholder="Optional">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gen-min">Min</label>
+          <input type="number" id="gen-min">
+        </div>
+        <div class="form-group">
+          <label for="gen-max">Max</label>
+          <input type="number" id="gen-max">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="gen-delete-btn">Delete</button>
+        <div class="modal-actions-right">
+          <button class="btn btn-secondary" id="gen-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="gen-save-btn">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Section Modal -->
+  <div class="modal-overlay hidden" id="edit-section-modal">
+    <div class="modal">
+      <h3>Edit Section</h3>
+      <div class="form-group">
+        <label for="section-name">Name</label>
+        <input type="text" id="section-name" placeholder="Optional">
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div id="color-palette"></div>
+      </div>
+      <div class="modal-actions">
+        <div class="modal-actions-right">
+          <button class="btn btn-secondary" id="section-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="section-save-btn">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Set Modal -->
+  <div class="modal-overlay hidden" id="save-modal">
+    <div class="modal">
+      <h3 id="save-modal-title">Save Set</h3>
+      <div class="form-group">
+        <label for="save-name">Name</label>
+        <input type="text" id="save-name" placeholder="My Set">
+      </div>
+      <p id="save-error" class="error hidden"></p>
+      <div class="modal-actions">
+        <div class="modal-actions-right">
+          <button class="btn btn-secondary" id="save-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="save-confirm-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay hidden" id="confirm-modal">
+    <div class="modal">
+      <p id="confirm-message"></p>
+      <div class="modal-actions">
+        <div class="modal-actions-right">
+          <button class="btn btn-secondary" id="confirm-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="confirm-ok-btn">Discard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
