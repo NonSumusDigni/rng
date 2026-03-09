@@ -13,15 +13,14 @@
   const DRAG_THRESHOLD = 10;
 
   const SECTION_COLORS = [
-    { light: '#fee2e2', dark: '#2d1b1b', name: 'Red' },
-    { light: '#ffedd5', dark: '#2d2418', name: 'Orange' },
-    { light: '#fef9c3', dark: '#2d2b14', name: 'Yellow' },
-    { light: '#dcfce7', dark: '#1b2d1e', name: 'Green' },
-    { light: '#ccfbf1', dark: '#182d2a', name: 'Teal' },
-    { light: '#dbeafe', dark: '#1b2336', name: 'Blue' },
-    { light: '#e0e7ff', dark: '#1e1f36', name: 'Indigo' },
-    { light: '#f3e8ff', dark: '#251b2d', name: 'Purple' },
-    { light: '#fce7f3', dark: '#2d1b27', name: 'Pink' },
+    { light: '#f2e5bc', dark: '#3c3836', name: 'Warm' },
+    { light: '#ecd2ae', dark: '#4a3223', name: 'Orange' },
+    { light: '#f2e2b6', dark: '#4a4223', name: 'Yellow' },
+    { light: '#dde5c2', dark: '#2e3a23', name: 'Green' },
+    { light: '#d0e4d8', dark: '#23362e', name: 'Aqua' },
+    { light: '#cdd8de', dark: '#233036', name: 'Blue' },
+    { light: '#e0cdd5', dark: '#3a2332', name: 'Purple' },
+    { light: '#e8d0c4', dark: '#3a2823', name: 'Red' },
   ];
 
   // ========== State ==========

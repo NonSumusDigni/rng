@@ -5,45 +5,49 @@
 }
 
 :root {
-  --bg: #f5f5f5;
-  --bg-card: #ffffff;
-  --text: #1a1a1a;
-  --text-secondary: #777;
-  --border: #e0e0e0;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08);
-  --radius: 10px;
-  --header-bg: #ffffff;
-  --footer-bg: #ffffff;
-  --modal-bg: #ffffff;
-  --overlay-bg: rgba(0,0,0,0.4);
+  /* Gruvbox Light */
+  --bg: #fbf1c7;
+  --bg-card: #ebdbb2;
+  --text: #3c3836;
+  --text-secondary: #7c6f64;
+  --border: #458588;
+  --border-glow: rgba(69, 133, 136, 0.3);
+  --accent: #458588;
+  --accent-hover: #076678;
+  --danger: #cc241d;
+  --danger-hover: #9d0006;
+  --shadow: none;
+  --radius: 1px;
+  --header-bg: #ebdbb2;
+  --footer-bg: #ebdbb2;
+  --modal-bg: #fbf1c7;
+  --overlay-bg: rgba(40,40,40,0.5);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #121212;
-    --bg-card: #1e1e1e;
-    --text: #e5e5e5;
-    --text-secondary: #888;
-    --border: #333;
-    --accent: #60a5fa;
-    --accent-hover: #3b82f6;
-    --danger: #f87171;
-    --danger-hover: #ef4444;
-    --shadow: 0 1px 3px rgba(0,0,0,0.3);
-    --header-bg: #1a1a1a;
-    --footer-bg: #1a1a1a;
-    --modal-bg: #1e1e1e;
+    /* Gruvbox Dark */
+    --bg: #282828;
+    --bg-card: #3c3836;
+    --text: #ebdbb2;
+    --text-secondary: #a89984;
+    --border: #d3869b;
+    --border-glow: rgba(211, 134, 155, 0.25);
+    --accent: #83a598;
+    --accent-hover: #458588;
+    --danger: #fb4934;
+    --danger-hover: #cc241d;
+    --shadow: none;
+    --header-bg: #3c3836;
+    --footer-bg: #3c3836;
+    --modal-bg: #3c3836;
     --overlay-bg: rgba(0,0,0,0.6);
   }
 }
 
 html, body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Ubuntu Mono', monospace;
   background: var(--bg);
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
@@ -61,7 +65,7 @@ html, body {
 header#header, .sets-header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: var(--header-bg);
   border-bottom: 1px solid var(--border);
   gap: 8px;
@@ -71,7 +75,7 @@ header#header, .sets-header {
 #set-title {
   flex: 1;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
@@ -81,7 +85,7 @@ header#header, .sets-header {
 .sets-header span {
   flex: 1;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
 }
 
@@ -93,13 +97,14 @@ header#header, .sets-header {
 
 .header-btn {
   background: none;
-  border: none;
+  border: 1px solid var(--border);
   color: var(--accent);
-  font-size: 0.9rem;
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  font-weight: 700;
 }
 
 .header-btn:hover {
@@ -118,8 +123,8 @@ header#header, .sets-header {
   top: 100%;
   background: var(--modal-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  box-shadow: 0 0 10px var(--border-glow);
   z-index: 50;
   min-width: 140px;
   overflow: hidden;
@@ -137,6 +142,7 @@ header#header, .sets-header {
   border: none;
   text-align: left;
   color: var(--text);
+  font-family: 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -167,22 +173,25 @@ header#header, .sets-header {
 }
 
 .section.multi {
-  padding: 30px 12px 12px;
+  padding: 28px 10px 10px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  box-shadow: 0 0 8px var(--border-glow);
 }
 
 .section-label {
   position: absolute;
-  top: 6px;
-  right: 10px;
+  top: 5px;
+  right: 8px;
   font-size: 0.75rem;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: var(--radius);
+  font-weight: 700;
   z-index: 1;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .section-label:hover {
@@ -194,18 +203,22 @@ header#header, .sets-header {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 12px 8px;
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
   position: relative;
   user-select: none;
-  box-shadow: var(--shadow);
+  box-shadow: 0 0 6px var(--border-glow), inset 0 0 4px var(--border-glow);
   transition: box-shadow 0.15s, transform 0.15s;
   width: calc(25% - 8px);
   min-width: 80px;
+}
+
+.gen-card:hover {
+  box-shadow: 0 0 10px var(--border-glow), inset 0 0 6px var(--border-glow);
 }
 
 .gen-card:active {
@@ -219,12 +232,12 @@ header#header, .sets-header {
   padding: 2px 4px;
   cursor: grab;
   touch-action: none;
-  opacity: 0.3;
+  opacity: 0.25;
   flex-shrink: 0;
 }
 
 .gen-drag-handle:hover {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .gen-drag-handle span {
@@ -270,7 +283,7 @@ header#header, .sets-header {
 
 .gen-range-hover {
   display: none;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--text-secondary);
   opacity: 0.7;
   margin-top: 2px;
@@ -317,7 +330,7 @@ header#header, .sets-header {
 
 .new-section-drop.drop-hover {
   border-color: var(--accent);
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(69, 133, 136, 0.1);
   color: var(--accent);
 }
 
@@ -357,7 +370,7 @@ body.dragging #roll-view {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 10px 24px;
   background: var(--footer-bg);
   border-top: 1px solid var(--border);
   flex-shrink: 0;
@@ -365,12 +378,13 @@ body.dragging #roll-view {
 
 .footer-btn {
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: 'Ubuntu Mono', monospace;
   transition: background 0.15s, transform 0.1s;
 }
 
@@ -384,7 +398,7 @@ body.dragging #roll-view {
   font-size: 1.5rem;
   background: var(--bg-card);
   color: var(--accent);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
 }
 
 #add-btn:hover {
@@ -396,8 +410,8 @@ body.dragging #roll-view {
   height: 56px;
   font-size: 1.6rem;
   background: var(--accent);
-  color: white;
-  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+  color: var(--bg);
+  border: 1px solid var(--accent-hover);
 }
 
 #roll-btn:hover {
@@ -426,16 +440,16 @@ body.dragging #roll-view {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 12px 16px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 10px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 0 6px var(--border-glow);
 }
 
 .set-item-name {
-  font-weight: 500;
+  font-weight: 700;
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -474,16 +488,18 @@ body.dragging #roll-view {
 
 .modal {
   background: var(--modal-bg);
-  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 24px;
   width: 100%;
   max-width: 360px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  box-shadow: 0 0 16px var(--border-glow), 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .modal h3 {
   margin-bottom: 16px;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .form-group {
@@ -495,15 +511,18 @@ body.dragging #roll-view {
   font-size: 0.8rem;
   color: var(--text-secondary);
   margin-bottom: 4px;
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 1rem;
+  font-family: 'Ubuntu Mono', monospace;
   background: var(--bg);
   color: var(--text);
   outline: none;
@@ -559,18 +578,20 @@ body.dragging #roll-view {
 
 /* ===== Buttons ===== */
 .btn {
-  padding: 8px 18px;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 6px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-family: 'Ubuntu Mono', monospace;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 700;
   transition: background 0.15s;
 }
 
 .btn-primary {
   background: var(--accent);
-  color: white;
+  color: var(--bg);
+  border-color: var(--accent-hover);
 }
 
 .btn-primary:hover {
@@ -589,14 +610,15 @@ body.dragging #roll-view {
 .btn-danger {
   background: none;
   color: var(--danger);
+  border-color: transparent;
 }
 
 .btn-danger:hover {
-  background: rgba(239,68,68,0.1);
+  background: rgba(204,36,29,0.1);
 }
 
 .btn-sm {
-  padding: 6px 14px;
+  padding: 4px 12px;
   font-size: 0.8rem;
 }
 
@@ -609,9 +631,9 @@ body.dragging #roll-view {
 }
 
 .color-swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
   border: 2px solid transparent;
   cursor: pointer;
   transition: transform 0.1s;
@@ -623,8 +645,8 @@ body.dragging #roll-view {
 }
 
 .color-swatch.selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent);
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
 }
 
 /* ===== Utilities ===== */

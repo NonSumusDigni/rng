@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rng-v1';
+const CACHE_NAME = 'rng-v3';
 const ASSETS = [
   './',
   './index.html',
