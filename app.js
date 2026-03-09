@@ -156,7 +156,7 @@
     // Drag handle
     const handle = document.createElement('div');
     handle.className = 'gen-drag-handle';
-    for (let i = 0; i < 3; i++) handle.appendChild(document.createElement('span'));
+    for (let i = 0; i < 6; i++) handle.appendChild(document.createElement('span'));
     card.appendChild(handle);
 
     // Content wrapper
