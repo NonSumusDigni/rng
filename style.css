@@ -22,6 +22,8 @@
   --footer-bg: #ebdbb2;
   --modal-bg: #fbf1c7;
   --overlay-bg: rgba(40,40,40,0.5);
+  --ok: #79740e;
+  --warn: #b57614;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +44,8 @@
     --footer-bg: #3c3836;
     --modal-bg: #3c3836;
     --overlay-bg: rgba(0,0,0,0.6);
+    --ok: #b8bb26;
+    --warn: #fabd2f;
   }
 }
 
@@ -652,4 +656,43 @@ body.dragging #roll-view {
 /* ===== Utilities ===== */
 .hidden {
   display: none !important;
+}
+
+/* ===== Sync ===== */
+.sync-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+}
+
+.sync-dot.st-synced { background: var(--ok); }
+.sync-dot.st-syncing { background: var(--warn); }
+.sync-dot.st-error { background: var(--danger); }
+
+#sync-panel {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 14px 16px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.sync-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sync-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-status {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  min-height: 1.2em;
 }

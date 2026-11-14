@@ -1,7 +1,8 @@
 # RNG - Project Spec
 
 ## Platform
-- Static web application (HTML/CSS/JS), no backend
+- Static web application (HTML/CSS/JS); works fully without a backend
+- Optional sync of saved sets with a self-hosted [rng-backend](https://github.com/NonSumusDigni/rng-backend) server (see **Sync**)
 - Hosted via GitHub Pages
 - PWA (Progressive Web App) — installable on mobile, works fully offline
   - Service worker caches all app assets for offline use
@@ -42,6 +43,23 @@ A single random number generator, displayed as a card/box.
 - **Delete**: user can delete saved sets
 - Set names must be unique
 - Generator names within a set do NOT need to be unique
+
+## Sync
+Optional. Saved sets (not the current roll view) can be synced across devices through an rng-backend server.
+
+- **Setup**: a "Sync server" URL field at the bottom of the Saved Sets view, stored in `localStorage`. Empty = sync off.
+  - The app is served over HTTPS, so the server must be HTTPS too (e.g. `https://rng.<tailnet>.ts.net` via Tailscale).
+- **No auth**: the server is expected to be reachable only on a private network (Tailscale).
+- **Data model**: each saved set is `{ name, sections, updatedAt, deleted }`.
+  - `name` is the key (set names are unique).
+  - `updatedAt` (epoch ms) is bumped on every save/delete; conflicts resolve as last write wins.
+  - Deleting a set leaves a tombstone (`deleted: true`, no sections) so the delete reaches other devices. Tombstones are hidden in the UI. Saving a new set with a deleted set's name replaces the tombstone.
+  - Sets saved before sync existed are migrated on load.
+- **Reachability**: the app polls `GET /api/health`. While unreachable it retries with progressive backoff (2s doubling to 5 min). Coming back online or returning to the tab retries immediately.
+- **Syncing**: while reachable, the app syncs on connect, ~1s after any local save/delete, and every 60s while the tab is visible. Each sync pushes locally changed sets and pulls everything changed on the server since the last sync.
+- **Server change**: if the server's database id changes (different or wiped server), the app pushes all its sets again.
+- **Status**: a small dot on the Sets button: green synced, yellow syncing, grey unreachable, red error. Hidden when sync is off. Details appear under the URL field.
+- Syncing never changes the current roll view, even if its loaded set changed or was deleted elsewhere.
 
 ## Sections
 Generators within a set can be organized into sections.

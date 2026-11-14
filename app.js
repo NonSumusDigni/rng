@@ -61,27 +61,73 @@
     return false;
   }
 
+  // Saved sets: { name, sections, updatedAt, deleted }. Deleted sets are kept as
+  // tombstones (deleted: true, no sections) so deletes propagate through sync.
+
+  /** All saved sets, including tombstones. */
   function getSavedSets() {
     try { return JSON.parse(localStorage.getItem(STORAGE_SETS) || '[]'); }
     catch (e) { return []; }
+  }
+
+  /** Saved sets the user can see. */
+  function getVisibleSets() {
+    return getSavedSets().filter(s => !s.deleted);
   }
 
   function saveSets(sets) {
     try { localStorage.setItem(STORAGE_SETS, JSON.stringify(sets)); } catch (e) { /* */ }
   }
 
-  function saveSetByName(name, sections) {
+  // Strictly increasing per set, so a save always beats the version it replaces.
+  const nextTimestamp = (prev) => Math.max(Date.now(), (prev || 0) + 1);
+
+  function writeSet(name, sections, deleted) {
     const sets = getSavedSets();
+    const idx = sets.findIndex(s => s.name === name);
+    const set = { name, sections, updatedAt: nextTimestamp(idx >= 0 ? sets[idx].updatedAt : 0), deleted };
+    if (idx >= 0) sets[idx] = set;
+    else sets.push(set);
+    saveSets(sets);
+    RngSync.noteChange(name);
+  }
+
+  function saveSetByName(name, sections) {
     const data = JSON.parse(JSON.stringify(sections));
     data.forEach(s => s.generators.forEach(g => { g.result = null; }));
-    const idx = sets.findIndex(s => s.name === name);
-    if (idx >= 0) sets[idx].sections = data;
-    else sets.push({ name, sections: data });
-    saveSets(sets);
+    writeSet(name, data, false);
   }
 
   function deleteSavedSet(name) {
-    saveSets(getSavedSets().filter(s => s.name !== name));
+    writeSet(name, [], true);
+  }
+
+  // Sets saved before sync existed have no updatedAt/deleted.
+  function migrateSavedSets() {
+    const sets = getSavedSets();
+    if (sets.every(s => typeof s.updatedAt === 'number')) return;
+    const now = Date.now();
+    sets.forEach(s => {
+      if (typeof s.updatedAt !== 'number') s.updatedAt = now;
+      if (typeof s.deleted !== 'boolean') s.deleted = false;
+    });
+    saveSets(sets);
+  }
+
+  /** Merge sets from the server, last write wins. */
+  function applyRemoteSets(remote) {
+    const sets = getSavedSets();
+    let changed = false;
+    remote.forEach(r => {
+      const idx = sets.findIndex(s => s.name === r.name);
+      if (idx < 0) sets.push(r);
+      else if (r.updatedAt > sets[idx].updatedAt) sets[idx] = r;
+      else return;
+      changed = true;
+    });
+    if (!changed) return;
+    saveSets(sets);
+    if (!$('sets-view').classList.contains('hidden')) renderSetsView();
   }
 
   // ========== Lookups ==========
@@ -194,7 +240,7 @@
   function renderSetsView() {
     const list = $('sets-list');
     list.innerHTML = '';
-    const sets = getSavedSets();
+    const sets = getVisibleSets();
 
     if (sets.length === 0) {
       const p = document.createElement('p');
@@ -526,7 +572,7 @@
       showSaveError('Name is required.');
       return;
     }
-    if (name !== state.loadedSetName && getSavedSets().find(s => s.name === name)) {
+    if (name !== state.loadedSetName && getVisibleSets().find(s => s.name === name)) {
       showSaveError('A set with this name already exists.');
       return;
     }
@@ -589,6 +635,7 @@
     $('footer').classList.add('hidden');
     $('sets-view').classList.remove('hidden');
     renderSetsView();
+    renderSyncStatus();
   }
 
   function checkUnsaved(cb) {
@@ -609,7 +656,7 @@
 
   function loadSet(name) {
     const doLoad = () => {
-      const set = getSavedSets().find(s => s.name === name);
+      const set = getVisibleSets().find(s => s.name === name);
       if (!set) return;
       state.sections = JSON.parse(JSON.stringify(set.sections));
       state.sections.forEach(s => {
@@ -688,10 +735,65 @@
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
   }
 
+  // ========== Sync ==========
+  function formatWait(ms) {
+    const s = Math.max(0, Math.round(ms / 1000));
+    return s < 60 ? s + 's' : Math.round(s / 60) + 'm';
+  }
+
+  function syncStatusText(st) {
+    const retry = st.nextAttemptAt ? ' Retrying in ' + formatWait(st.nextAttemptAt - Date.now()) + '.' : '';
+    switch (st.state) {
+      case 'off':
+        return 'Sync is off. Enter your rng-backend URL to sync saved sets between devices.';
+      case 'syncing':
+        return 'Syncing…';
+      case 'synced':
+        return 'Synced at ' + new Date(st.lastSyncAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + '.';
+      case 'offline': {
+        let msg = "Can't reach the server." + retry;
+        // An https page can't call an http server (except localhost).
+        if (location.protocol === 'https:' && /^http:/.test(st.url) && !/^http:\/\/(localhost|127\.0\.0\.1)[:/]?/.test(st.url)) {
+          msg += ' Browsers block http:// servers from this page; use the https:// address.';
+        }
+        return msg;
+      }
+      case 'error':
+        return 'Sync failed (' + st.detail + ').' + retry;
+    }
+    return '';
+  }
+
+  function renderSyncStatus() {
+    const st = RngSync.getStatus();
+    const dot = $('sync-dot');
+    dot.className = 'sync-dot st-' + st.state + (st.state === 'off' ? ' hidden' : '');
+    dot.title = syncStatusText(st);
+    if (!$('sets-view').classList.contains('hidden')) $('sync-status').textContent = syncStatusText(st);
+  }
+
+  function saveSyncUrl() {
+    $('sync-url').value = RngSync.setUrl($('sync-url').value);
+    renderSyncStatus();
+  }
+
+  function initSync() {
+    migrateSavedSets();
+    RngSync.init({ getSets: getSavedSets, applyRemote: applyRemoteSets });
+    RngSync.onStatus(renderSyncStatus);
+    $('sync-url').value = RngSync.getUrl();
+    $('sync-url-save').addEventListener('click', saveSyncUrl);
+    $('sync-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveSyncUrl(); });
+    // Keep the "retrying in Ns" countdown fresh.
+    setInterval(() => { if (RngSync.getStatus().nextAttemptAt) renderSyncStatus(); }, 1000);
+    renderSyncStatus();
+  }
+
   // ========== Init ==========
   function init() {
     if (!loadPersistedState()) state = freshState();
     initEvents();
+    initSync();
     render();
 
     if ('serviceWorker' in navigator) {
